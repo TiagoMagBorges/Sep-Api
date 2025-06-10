@@ -1,20 +1,18 @@
 package br.com.sep.sepapi.dto;
 
-public class LoginResponseDTO {
+import br.com.sep.sepapi.domain.model.User;
 
+public class UserResponseDTO {
     private final Long id;
-
     private final String name;
-
     private final String email;
-
     private final String phone;
 
-    public LoginResponseDTO(Long id, String name, String email, String phone) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
+    public UserResponseDTO(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.phone = user.getPhone();
     }
 
     public Long getId() {
