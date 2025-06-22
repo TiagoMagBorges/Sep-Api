@@ -1,7 +1,10 @@
 package br.com.sep.sepapi.controller;
 
 import br.com.sep.sepapi.domain.model.User;
+import br.com.sep.sepapi.dto.UserRequestDTO;
+import br.com.sep.sepapi.dto.UserResponseDTO;
 import br.com.sep.sepapi.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,12 +30,10 @@ public class UserController {
 
     @GetMapping("/byEmail")
     public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
-        User user = userService.getUserByEmail(email); // Assuming this method exists in UserService
-        if (user != null) {
+        User user = userService.getUserByEmail(email);
+        if (user != null)
             return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build(); // Return 404 if user not found
-        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping
@@ -42,14 +43,22 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        System.out.println(user);
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
+        User userToCreate = new User();
+        userToCreate.setName(user.getName());
+        userToCreate.setEmail(user.getEmail());
+        userToCreate.setPassword(user.getPassword());
+        userToCreate.setPhone(user.getPhone());
+
+        User createdUser = userService.createUser(userToCreate);
+
+        UserResponseDTO userResponse = new UserResponseDTO(createdUser);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{userId}")
+                .path("/{id}")
                 .buildAndExpand(createdUser.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(createdUser);
+        return ResponseEntity.created(location).body(userResponse);
     }
 
     @PutMapping("/{userId}")

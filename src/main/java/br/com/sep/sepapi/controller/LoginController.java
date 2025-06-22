@@ -1,8 +1,8 @@
 package br.com.sep.sepapi.controller;
 
 import br.com.sep.sepapi.dto.LoginRequestDTO;
-import br.com.sep.sepapi.dto.LoginResponseDTO;
 import br.com.sep.sepapi.domain.model.User;
+import br.com.sep.sepapi.dto.UserResponseDTO;
 import br.com.sep.sepapi.service.UserService;
 
 import org.springframework.http.ResponseEntity;
@@ -23,19 +23,13 @@ public class LoginController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         User user = userService.getUserByEmail(loginRequestDTO.getEmail());
 
         if (user != null && user.getPassword().equals(loginRequestDTO.getPassword())) {
-            LoginResponseDTO response = new LoginResponseDTO(
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getPhone()
-            );
+            UserResponseDTO response = new UserResponseDTO(user);
             return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(401).build();
         }
+        return ResponseEntity.status(401).build();
     }
 }
