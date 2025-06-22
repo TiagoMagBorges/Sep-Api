@@ -5,6 +5,8 @@ import br.com.sep.sepapi.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/students")
 public class StudentController {
@@ -13,6 +15,12 @@ public class StudentController {
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Student>> getStudentById(@PathVariable Long userId) {
+        List<Student> users = studentService.findAllStudentsByUserId(userId);
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping
